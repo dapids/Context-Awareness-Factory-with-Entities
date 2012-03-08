@@ -67,9 +67,9 @@ class GraphManager(object):
         name = name.lower()
         graph, ns = cntx.getInfo()[1], cntx.getInfo()[2]
         if not isinstance(rng, (int, str, float, long)):
-            cls.__addIndObjProperty(name, domain, rng.getName(), graph, ns)
+            cls.__addIndObjProperty(name, domain.getName(), rng.getName(), graph, ns)
         else:
-            cls.__addIndDataProperty(name, domain, rng, graph, ns)
+            cls.__addIndDataProperty(name, domain.getName(), rng, graph, ns)
 
 
     @classmethod

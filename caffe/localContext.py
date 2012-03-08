@@ -31,7 +31,7 @@ class LocalContext(object):
         
     def defineProperties(self, *properties):
         for name, card in properties:
-            self.__propertiesDict[string.upper(name)] = [None, None, card, self]
+            self.__propertiesDict[string.upper(name)] = [None, None, self, card]
             
   
     def getInfo(self):

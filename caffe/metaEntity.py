@@ -33,7 +33,7 @@ class MetaEntity(type):
         if name.isupper():
             try:
                 if (self.__propertiesDict[name][0] is None) and (self.__propertiesDict[name][1] is None):
-                    GraphManager.mapClassProperty(name, self, value, self.__propertiesDict[name][3])
+                    GraphManager.mapClassProperty(name, self, value, self.__propertiesDict[name][2])
                 else:
                     raise SemanticException (("The property '%s' have been already defined as '%s %s %s'." +
                                               "It is not possible to override it.") % (name,
@@ -46,7 +46,7 @@ class MetaEntity(type):
             except SemanticException as e:
                 print e
             else:
-                print "Mapping class property: '%s' -> '%s' -> '%s'.\n" % (self.__name__, name, value)
+                print "Mapping class property: '%s' -> '%s' -> '%s'.\n" % (self.__name__, name, value.__name__)
                 self.__propertiesDict[name][0] = self
                 self.__propertiesDict[name][1] = value
             name = "__" + name

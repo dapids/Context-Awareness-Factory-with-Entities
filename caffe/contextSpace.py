@@ -52,3 +52,7 @@ class ContextSpace(object):
         ind = cl()
         ind(name)
         return ind
+    
+    
+    def serializeContext(self, formatType="pretty-xml"):
+        return self.__globalContext.getInfo()[0].serialize(format = formatType)

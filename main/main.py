@@ -29,14 +29,13 @@ if __name__ == '__main__':
     Person.AGE = int
                 
     david.KNOWS = andrea
+    david.KNOWS = david
     david.NAME = "David Sorrentino"
     david.AGE = 27
-    
-    del david.KNOWS
-    del david.AGE
-                                                   
+    david.AGE = 28
+                                                                         
     print ("--------------------------------------------------------\n")
-    print cs.getGlobalContext()[0].serialize(format = "pretty-xml")
+    print cs.serializeContext()
 
     for index, entry in enumerate(cs.getGlobalContext()[0].contexts()):
         print index, entry
