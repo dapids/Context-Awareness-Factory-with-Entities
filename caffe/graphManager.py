@@ -5,9 +5,9 @@ Created on Feb 24, 2012
 '''
 
 from rdflib import ConjunctiveGraph, OWL, BNode, Literal
-from ..standardNS import StandardNS
-from .exceptions import SemanticException
-from .utils import Utils
+from .standardNS import StandardNS
+from .tools.exceptions import SemanticException
+from .tools.utils import Utils
 
 class GraphManager(object):
     '''

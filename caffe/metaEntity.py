@@ -4,7 +4,7 @@ Created on Feb 24, 2012
 @author: david
 '''
 
-from .tools.graphManager import GraphManager
+from .graphManager import GraphManager
 from .tools.exceptions import SemanticException
 
 class MetaEntity(type):

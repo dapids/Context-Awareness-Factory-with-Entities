@@ -5,7 +5,7 @@ Created on Feb 12, 2012
 '''
 
 from sets import Set
-from .tools.graphManager import GraphManager
+from .graphManager import GraphManager
 from .localContext import LocalContext
 from .tools.exceptions import SemanticException
 from .globalContext import GlobalContext
@@ -49,8 +49,11 @@ class ContextSpace(object):
         if name not in self.__registeredIndividuals:
             GraphManager.mapIndividual(name, cl.__name__, self.__globalContext)
             self.__registeredIndividuals.add(name)
-        ind = cl()
-        ind(name)
+            ind = cl()
+            ind(name)
+        else:
+            print "It is not possible to create the entity '%s'. An entity called in the same way already exists.\n" % name
+            ind = None
         return ind
     
     

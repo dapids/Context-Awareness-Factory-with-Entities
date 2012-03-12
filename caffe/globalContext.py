@@ -5,7 +5,7 @@ Created on Mar 2, 2012
 '''
 
 from rdflib import Namespace
-from .tools.graphManager import GraphManager
+from .graphManager import GraphManager
 
 class GlobalContext(object):
     '''

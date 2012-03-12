@@ -33,6 +33,10 @@ if __name__ == '__main__':
     david.NAME = "David Sorrentino"
     david.AGE = 27
     david.AGE = 28
+    
+    del david.KNOWS[david]
+    
+    del david.AGE
                                                                          
     print ("--------------------------------------------------------\n")
     print cs.serializeContext()

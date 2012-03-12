@@ -5,8 +5,9 @@ Created on Feb 23, 2012
 '''
 
 from .metaEntity import MetaEntity
-from .tools.graphManager import GraphManager
+from .graphManager import GraphManager
 from .tools.exceptions import SemanticException
+from .tools.multipleProperty import MultipleProperty as MP
 
 class Entity(object):
     '''
@@ -32,12 +33,15 @@ class Entity(object):
                                 GraphManager.removeIndProperty(name, self.__name, self.__getattribute__(name), self._MetaEntity__propertiesDict[name][2])
                             except AttributeError:
                                 pass
+                            else:
+                                print "Deleting individual property: '%s' -> '%s' -> '%s'.\n" % (self.__name, name, self.__getattribute__(name))
                         else:
                             try:
                                 finalValue = self.__getattribute__(name)
-                                finalValue.append(value.getName())
+                                finalValue.setItem(name, value, self, self._MetaEntity__propertiesDict[name][2])
                             except AttributeError:
-                                finalValue = [value.getName()]
+                                finalValue = MP()
+                                finalValue.setItem(name, self, value, self._MetaEntity__propertiesDict[name][2])
                         GraphManager.mapIndProperty(name, self, value, self._MetaEntity__propertiesDict[name][2])
                     else:
                         raise SemanticException("The property '%s' expects a value of type '%s'. The value given is of type '%s'." %
@@ -60,15 +64,22 @@ class Entity(object):
                     print "Mapping individual property: '%s' -> '%s' -> '%s'.\n" % (self.__name, name, propValue)
         object.__setattr__(self, name, finalValue)
         
-    def __delattr__(self, name):
-        GraphManager.removeIndProperty(name, self.__name, self.__getattribute__(name), self._MetaEntity__propertiesDict[name][2])
-        try:
-            value = self.__getattribute__(name).getName()
-        except AttributeError:
-            value = self.__getattribute__(name)
-        print "Deleting individual property: '%s' -> '%s' -> '%s'.\n" % (self.__name, name, value)
-        object.__setattr__(self, name, None)
         
+    def __delattr__(self, name):
+        if name.isupper():
+            if isinstance(self.__getattribute__(name), MP):
+                for rng in self.__getattribute__(name).keys():
+                    GraphManager.removeIndProperty(name, self.__name, rng, self._MetaEntity__propertiesDict[name][2])
+                    print "Deleting individual property: '%s' -> '%s' -> '%s'.\n" % (self.__name, name, rng)
+            else:
+                GraphManager.removeIndProperty(name, self.__name, self.__getattribute__(name), self._MetaEntity__propertiesDict[name][2])
+                try:
+                    value = self.__getattribute__(name).getName()
+                except AttributeError:
+                    value = self.__getattribute__(name)
+                print "Deleting individual property: '%s' -> '%s' -> '%s'.\n" % (self.__name, name, value)
+        object.__delattr__(self, name)
+            
         
     def getName(self):
         return self.__name
