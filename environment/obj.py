@@ -1,5 +1,5 @@
 '''
-Created on Feb 24, 2012
+Created on Mar 12, 2012
 
 @author: david
 '''
@@ -7,7 +7,7 @@ Created on Feb 24, 2012
 from caffe.entity import Entity
 from environment.thing import Thing
 
-class Person(Entity, Thing):
+class Obj(Entity, Thing):
     '''
     classdocs
     '''

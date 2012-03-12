@@ -4,15 +4,15 @@ Created on Feb 24, 2012
 @author: david
 '''
 
-from .student import Student
+from .person import Person
 from caffe.entity import Entity
 
-class Asd(object, Entity): pass
-
-class MasterS(Entity, Student, Asd):
+class Owner(Entity, Person):
     '''
     classdocs
     '''
+        
+    __surname = None    
         
     def __init__(self):
         pass

@@ -7,7 +7,7 @@ Created on Feb 24, 2012
 from caffe.entity import Entity
 from .person import Person
 
-class Student(Person, Entity):
+class Guest(Person, Entity):
     '''
     classdocs
     '''

@@ -32,6 +32,8 @@ class LocalContext(object):
     def defineProperties(self, *properties):
         for name, card in properties:
             self.__propertiesDict[string.upper(name)] = [None, None, self, card]
+            print "Defining class property: %s" % name
+            print "Cardinality: %s\n" % (1 if card == 1 else "*")
             
   
     def getInfo(self):

@@ -6,40 +6,98 @@ Created on Jan 30, 2012
 '''
 
 from caffe.contextSpace import ContextSpace
-from environment.student import Student
+
+from caffe.tools.writer import Writer
+import sys
+
 from environment.person import Person
-from environment.masterS import MasterS, Asd
+from environment.owner import Owner
+from environment.room import Room
+from environment.thing import Thing
+from environment.guest import Guest
+from environment.passiveObj import PassiveObj
+from environment.activeObj import ActiveObj
 
 if __name__ == '__main__':
 
+    # create the context space
     cs = ContextSpace("http://caffe.ns/home#")
     
-    david = cs.createEntity(MasterS, "David")
-    andrea = cs.createEntity(Student, "Andrea")
-    asd = cs.createEntity(Asd, "asd")
+    # create the individuals
+    david = cs.createEntity(Owner, "David")
+    marco = cs.createEntity(Guest, "Marco")
+    kitchen = cs.createEntity(Room, "kitchen")
+    livingRoom = cs.createEntity(Room, "livingRoom")
+    bowl = cs.createEntity(PassiveObj, "bowl")
+    spoon = cs.createEntity(PassiveObj, "spoon")
+    television = cs.createEntity(ActiveObj, "television")
+    toaster = cs.createEntity(ActiveObj, "toaster")
     
-    kitchen = cs.setLocalContext("kitchen")
-    kitchen.defineProperties(("knows", 0))
+    # create a local context and define the properties belonging to it
+    locations = cs.setLocalContext("locations")
+    locations.defineProperties(("isLocated", 1))
     
+    # create a local context and define the properties belonging to it
     info = cs.setLocalContext("info")
     info.defineProperties(("name", 1), ("age", 1))
     
-    Person.KNOWS = Person
+    # create a local context and define the properties belonging to it
+    actions = cs.setLocalContext("actions")
+    actions.defineProperties(("holds", 0), ("uses", 0), ("talksTo", 0))
+    
+    # define the domain and the range of the properties
     Person.NAME = str
     Person.AGE = int
-                
-    david.KNOWS = andrea
-    david.KNOWS = david
+    Thing.ISLOCATED = Room
+    Person.USES = ActiveObj
+    Person.HOLDS = PassiveObj
+    Person.TALKSTO = Person
+
+##===============================================================================
+## 
+##===============================================================================
+
+    # populate the semantic network with some data
     david.NAME = "David Sorrentino"
     david.AGE = 27
-    david.AGE = 28
+    david.ISLOCATED = livingRoom
     
-    del david.KNOWS[david]
+    marco.NAME = "Marco Sorrentino"
+    marco.AGE = 26
+    marco.ISLOCATED = livingRoom
     
-    del david.AGE
-                                                                         
-    print ("--------------------------------------------------------\n")
-    print cs.serializeContext()
+    bowl.ISLOCATED = livingRoom
+    spoon.ISLOCATED = livingRoom
+    television.ISLOCATED = livingRoom
+    toaster.ISLOCATED = kitchen
+    
+    david.TALKSTO = marco
+    david.HOLDS = spoon
+    david.HOLDS = bowl
+    david.USES = television
+    
+##===============================================================================
+## 
+##===============================================================================
 
+#    # update the semantic network
+#    del david.TALKSTO[marco]
+#    del david.HOLDS
+#    del david.USES[television]
+#    david.ISLOCATED = kitchen
+#    david.USES = toaster
+
+##===============================================================================
+## 
+##===============================================================================
+
+    # list all the contexts
+    print "Contexts list:"
     for index, entry in enumerate(cs.getGlobalContext()[0].contexts()):
-        print index, entry
+        print "%s: %s" % (index, entry)
+        
+    # serialize the graph as owl/rdf/xml
+    sys.stdout.write("\nUploading ontology on FTP: ")                                                                         
+    wr = Writer()
+    wr.writeOntology(cs.serializeContext(), True)
+    sys.stdout.write("DONE!")

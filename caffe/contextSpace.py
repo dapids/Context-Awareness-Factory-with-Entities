@@ -48,6 +48,7 @@ class ContextSpace(object):
                 print e
         if name not in self.__registeredIndividuals:
             GraphManager.mapIndividual(name, cl.__name__, self.__globalContext)
+            print "Mapping individual: '%s' (%s)\n" % (name, cl.__name__)
             self.__registeredIndividuals.add(name)
             ind = cl()
             ind(name)

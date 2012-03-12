@@ -30,7 +30,7 @@ class GraphManager(object):
     def mapClass(cls, cl, gCntx, pd, rc):
         graph = gCntx[0]
         ns = gCntx[1]
-        cls.__addClass(cl.__name__, graph)
+        cls.__addClass(cl.__name__, graph, ns)
         rc.add(cl)
         cl.getPropsDict(pd)
         for superCl in cl.__bases__:
@@ -59,7 +59,7 @@ class GraphManager(object):
     def mapIndividual(cls, name, cl, gc):
         graph = gc.getInfo()[0]
         ns = gc.getInfo()[1]
-        graph.add((BNode(name), cls.__sns["rdf"]["type"], ns[cl]))
+        graph.add((ns[name], cls.__sns["rdf"]["type"], ns[cl]))
 
 
     @classmethod
@@ -67,9 +67,9 @@ class GraphManager(object):
         name = name.lower()
         graph, ns = cntx.getInfo()[1], cntx.getInfo()[2]
         if not isinstance(rng, (int, str, float, long)):
-            cls.__addIndObjProperty(name, domain.getName(), rng.getName(), graph, ns)
+            cls.__addIndObjProperty(name, domain, rng.getName(), graph, ns)
         else:
-            cls.__addIndDataProperty(name, domain.getName(), rng, graph, ns)
+            cls.__addIndDataProperty(name, domain, rng, graph, ns)
 
 
     @classmethod
@@ -84,7 +84,7 @@ class GraphManager(object):
 
     @classmethod
     def __remIndObjProperty(cls, name, domain, rng, graph, ns):
-        graph.remove((BNode(domain), ns[name], ns[rng]))
+        graph.remove((ns[domain], ns[name], ns[rng]))
 
 
     @classmethod
@@ -97,12 +97,12 @@ class GraphManager(object):
             obj = Literal(rng, datatype=cls.__sns["xsd"]["float"])
         else:
             obj = Literal(rng, datatype=cls.__sns["xsd"]["string"])
-        graph.remove((BNode(domain), ns[name], obj))
+        graph.remove((ns[domain], ns[name], obj))
     
 
     @classmethod
     def __addIndObjProperty(cls, name, domain, rng, graph, ns):
-        graph.add((BNode(domain), ns[name], ns[rng]))
+        graph.add((ns[domain], ns[name], ns[rng]))
     
     
     @classmethod
@@ -115,14 +115,14 @@ class GraphManager(object):
             obj = Literal(rng, datatype=cls.__sns["xsd"]["float"])
         else:
             obj = Literal(rng, datatype=cls.__sns["xsd"]["string"])
-        graph.add((BNode(domain), ns[name], obj))
+        graph.add((ns[domain], ns[name], obj))
     
 
     @classmethod
     def __addObjectProperty(cls, name, domain, rng, graph, ns):
-        triples = ((BNode(name), cls.__sns["rdf"]["type"], cls.__sns["owl"]["ObjectProperty"]),
-                    (BNode(name), cls.__sns["rdfs"]["domain"], ns[domain]),
-                    (BNode(name), cls.__sns["rdfs"]["range"], ns[rng]))
+        triples = ((ns[name], cls.__sns["rdf"]["type"], cls.__sns["owl"]["ObjectProperty"]),
+                    (ns[name], cls.__sns["rdfs"]["domain"], ns[domain]),
+                    (ns[name], cls.__sns["rdfs"]["range"], ns[rng]))
 #        a = BNode()
 #        triples += ((a, cls.__sns["rdf"]["type"], cls.__sns["owl"]["Restriction"]),
 #        (BNode(domain), cls.__sns["rdfs"]["subClassOf"], a),
@@ -135,17 +135,17 @@ class GraphManager(object):
     @classmethod
     def __addDataProperty(cls, name, domain, rng, graph, ns):
         if rng is int:
-            datatype = Literal(None, datatype=cls.__sns["xsd"]["int"])
+            data = cls.__sns["xsd"]["int"]
         elif rng is long:
-            datatype = Literal(None, datatype=cls.__sns["xsd"]["long"])
+            data = cls.__sns["xsd"]["long"]
         elif rng is float:
-            datatype = Literal(None, datatype=cls.__sns["xsd"]["float"])
+            data = cls.__sns["xsd"]["float"]
         else:
-            datatype = Literal(None, datatype=cls.__sns["xsd"]["string"])
+            data = cls.__sns["xsd"]["string"]
             
-        triples = ((BNode(name), cls.__sns["rdf"]["type"], cls.__sns["owl"]["DatatypeProperty"]),
-                    (BNode(name), cls.__sns["rdfs"]["domain"], ns[domain]),
-                    (BNode(name), cls.__sns["rdfs"]["range"], datatype))
+        triples = ((ns[name], cls.__sns["rdf"]["type"], cls.__sns["owl"]["DatatypeProperty"]),
+                    (ns[name], cls.__sns["rdfs"]["domain"], ns[domain]),
+                    (ns[name], cls.__sns["rdfs"]["range"], data))
 #        a = BNode()
 #        triples += ((a, cls.__sns["rdf"]["type"], cls.__sns["owl"]["Restriction"]),
 #        (BNode(dmn), cls.__sns["rdfs"]["subClassOf"], a),
@@ -156,10 +156,10 @@ class GraphManager(object):
 
 
     @classmethod
-    def __addClass(cls, name, graph):
-        graph.add((BNode(name), cls.__sns["rdf"]["type"], cls.__sns["owl"]["Class"]))
+    def __addClass(cls, name, graph, ns):
+        graph.add((ns[name], cls.__sns["rdf"]["type"], cls.__sns["owl"]["Class"]))
     
 
     @classmethod    
     def __addsuperClass(cls, name, superClName, graph, ns):
-        graph.add((BNode(name), cls.__sns["rdfs"]["subClassOf"], ns[superClName]))
+        graph.add((ns[name], cls.__sns["rdfs"]["subClassOf"], ns[superClName]))
