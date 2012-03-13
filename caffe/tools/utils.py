@@ -8,12 +8,18 @@ from .exceptions import SemanticException
 
 class Utils(object):
     '''
-    classdocs
+    Contains a series of classmethods useful to other classes.
     '''
 
 
     @classmethod
     def isSubOfEntity(cls, cl):
+        '''
+        Checks whether a class is subclass of Entity.
+        @type cl: type
+        @param cl: the class to check
+        @return: True or False, depending on whether or not the class checked is subclass of Entity, respectively
+        '''
         result = False
         if cl is not caffe.entity.Entity and issubclass(cl, caffe.entity.Entity):
             result = True
@@ -21,6 +27,16 @@ class Utils(object):
     
     @classmethod
     def checkClassRange(cls, name, domain, rng):
+        '''
+        Checks whether the value assigned to a property is correct and discovers the type of the property.
+        @type name: str
+        @param name: the name of the property to check
+        @type domain: str
+        @param domain: the name of the domain class
+        @type rng: type / [int, str, long, float, boolean]
+        @param rng: the range class to check
+        @return: the typology of property. None if the value assigned to the property is not valid
+        '''
         result = None
         if isinstance(rng, type(type)) and cls.isSubOfEntity(rng):
             result = "objectProperty"
@@ -28,5 +44,5 @@ class Utils(object):
             result = "dataProperty"
         else:
             raise SemanticException(("The value assigned to '%s.%s' should be either a subclass of 'Entity' " +
-                                    "or one of the following ones [int, long, float, string].") % (domain.__name__, name))
+                                    "or one of the following ones [int, long, float, string].") % (domain, name))
         return result

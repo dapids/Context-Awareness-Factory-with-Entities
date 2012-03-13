@@ -7,8 +7,8 @@ Created on Jan 30, 2012
 
 from caffe.contextSpace import ContextSpace
 
-from caffe.tools.writer import Writer
 import sys
+from caffe.tools.writer import Writer
 
 from environment.person import Person
 from environment.owner import Owner
@@ -24,8 +24,8 @@ if __name__ == '__main__':
     cs = ContextSpace("http://caffe.ns/home#")
     
     # create the individuals
-    david = cs.createEntity(Owner, "David")
-    marco = cs.createEntity(Guest, "Marco")
+    david = cs.createEntity(Owner, "david")
+    marco = cs.createEntity(Guest, "marco")
     kitchen = cs.createEntity(Room, "kitchen")
     livingRoom = cs.createEntity(Room, "livingRoom")
     bowl = cs.createEntity(PassiveObj, "bowl")
@@ -95,9 +95,17 @@ if __name__ == '__main__':
     print "Contexts list:"
     for index, entry in enumerate(cs.getGlobalContext()[0].contexts()):
         print "%s: %s" % (index, entry)
-        
-    # serialize the graph as owl/rdf/xml
-    sys.stdout.write("\nUploading ontology on FTP: ")                                                                         
-    wr = Writer()
-    wr.writeOntology(cs.serializeContext(), True)
-    sys.stdout.write("DONE!")
+    
+    while True:
+        try:
+            inputData = raw_input("\nData from sensors: ")
+        except EOFError:
+            sys.exit("\nGoodbye")
+            
+        cs.pushData(inputData)
+            
+        print("Validare l'input!!")    
+            
+        # serialize the graph as owl/rdf/xml and upload it on a FTP
+        wr = Writer()
+        wr.writeOntology(cs.serializeContext(), True)

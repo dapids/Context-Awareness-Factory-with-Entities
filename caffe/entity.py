@@ -15,11 +15,17 @@ class Entity(object):
     '''
     
     __metaclass__ = MetaEntity
-    __name = None
+    __id = None
 
 
-    def __call__(self, name):
-        self.__name = name
+    def __call__(self, identificator, dispatcher):
+        self.__id = identificator
+        dispatcher.subscribe(self, self.__handler)
+        
+
+    def __handler(self, event):
+        self.__setattr__(event.getPredicate(), event.getObject())
+#        print("\n\n%s: %s" % (self.__id, repr(event)))
 
 
     def __setattr__(self, name, value):
@@ -30,30 +36,28 @@ class Entity(object):
                     if isinstance(value, self._MetaEntity__propertiesDict[name][1]):
                         if self._MetaEntity__propertiesDict[name][3] == 1:
                             try:
-                                GraphManager.removeIndProperty(name, self.__name, self.__getattribute__(name), self._MetaEntity__propertiesDict[name][2])
+                                GraphManager.removeIndProperty(name, self.__id, self.__getattribute__(name), self._MetaEntity__propertiesDict[name][2])
                             except AttributeError:
                                 pass
                             else:
                                 try:
-                                    val = self.__getattribute__(name).getName()
+                                    val = self.__getattribute__(name).getId()
                                 except AttributeError:
                                     val = self.__getattribute__(name)
                                 finally:
-                                    print "Deleting individual property: '%s' -> %s -> '%s'\n" % (self.__name, name, val)
+                                    print "Deleting individual property: '%s' -> %s -> '%s'\n" % (self.__id, name, val)
                         else:
                             try:
                                 finalValue = self.__getattribute__(name)
-                                finalValue.setItem(name, self, value, self._MetaEntity__propertiesDict[name][2])
                             except AttributeError:
                                 finalValue = MP()
-                                finalValue.setItem(name, self, value, self._MetaEntity__propertiesDict[name][2])
+                            finalValue.setItem(name, self, value, self._MetaEntity__propertiesDict[name][2])
                     else:
                         raise SemanticException("The property '%s' expects a value of type '%s'. The value given is of type '%s'." %
                                             (name, self._MetaEntity__propertiesDict[name][1].__name__, type(value).__name__))
                 else:
                     raise SemanticException("The property '%s' has been not defined for the class '%s'." %
                                             (name, self.__class__.__name__))
-                
             except TypeError:
                 print "Operation not allowed. You are trying to define an individual property before specifying the respective class property.\n"
             except KeyError:
@@ -61,13 +65,13 @@ class Entity(object):
             except SemanticException as e:
                 print e
             else:
-                GraphManager.mapIndProperty(name, self.__name, value, self._MetaEntity__propertiesDict[name][2])
+                GraphManager.mapIndProperty(name, self.__id, value, self._MetaEntity__propertiesDict[name][2])
                 try:
-                    propValue = value.getName()
+                    propValue = value.getId()
                 except AttributeError:
                     propValue = value
                 finally:
-                    print "Mapping individual property: '%s' -> %s -> '%s'\n" % (self.__name, name, propValue)
+                    print "Mapping individual property: '%s' -> %s -> '%s'\n" % (self.__id, name, propValue)
         object.__setattr__(self, name, finalValue)
         
         
@@ -75,18 +79,18 @@ class Entity(object):
         if name.isupper():
             if isinstance(self.__getattribute__(name), MP):
                 for rng in self.__getattribute__(name).keys():
-                    GraphManager.removeIndProperty(name, self.__name, rng, self._MetaEntity__propertiesDict[name][2])
-                    print "Deleting individual property: '%s' -> %s -> '%s'\n" % (self.__name, name, rng)
+                    GraphManager.removeIndProperty(name, self.__id, rng, self._MetaEntity__propertiesDict[name][2])
+                    print "Deleting individual property: '%s' -> %s -> '%s'\n" % (self.__id, name, rng)
             else:
-                GraphManager.removeIndProperty(name, self.__name, self.__getattribute__(name), self._MetaEntity__propertiesDict[name][2])
+                GraphManager.removeIndProperty(name, self.__id, self.__getattribute__(name), self._MetaEntity__propertiesDict[name][2])
                 try:
-                    value = self.__getattribute__(name).getName()
+                    value = self.__getattribute__(name).getId()
                 except AttributeError:
                     value = self.__getattribute__(name)
                 finally:
-                    print "Deleting individual property: '%s' -> %s -> '%s'\n" % (self.__name, name, value)
+                    print "Deleting individual property: '%s' -> %s -> '%s'\n" % (self.__id, name, value)
         object.__delattr__(self, name)
             
         
-    def getName(self):
-        return self.__name
+    def getId(self):
+        return self.__id

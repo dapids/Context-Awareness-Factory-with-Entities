@@ -10,8 +10,8 @@ from ftplib import FTP
 
 class Writer(object):
     '''
-    Allows to write an ontology in local or in remote (FTP)
-    Edit config.ini to change the settings
+    Allows to write an ontology both in local and in remote (FTP).
+    Edit config.ini to change the settings about paths and filenames.
     '''
     __ontology = None
     __ontFile = None
@@ -25,7 +25,11 @@ class Writer(object):
     
     def writeOntology(self, ont, upload=False):
         '''
-        Writes the ontology on a local file
+        Writes the ontology in a local/remote file.
+        @type ont: str
+        @param ont: the ontology to write in a local/remote file
+        @type upload: boolean
+        @param upload: if True it uploads the ontology on a FTP
         '''
         self.__ontFile.write(ont)
         self.__ontFile.close()
@@ -37,10 +41,11 @@ class Writer(object):
       
     def uploadOntology(self):
         '''
-        Upload an ontology on an FTP domain
+        Uploads an ontology on a FTP.
         '''
         session = FTP(self.__ontology["ftpaddr"], self.__ontology["ftpuser"], self.__ontology["ftppass"])
         session.cwd(self.__ontology["ftpdir"])
         session.storbinary("STOR context.rdf", self.__ontFile)
         session.quit()
         self.__ontFile.close()
+        print "Network uploaded on '%s'!" % (self.__ontology["ftpaddr"])

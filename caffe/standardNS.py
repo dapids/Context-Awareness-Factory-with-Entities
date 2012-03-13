@@ -8,11 +8,14 @@ from rdflib import OWL, RDF, RDFS, XSD
 
 class StandardNS(object):
     '''
-    classdocs
+    Provides a dictionary of dictionaries containing all the needed tags for OWL, RDF, RDFS, XSD.
     '''
     __snsHandler = dict()
 
     def __init__(self):
+        '''
+        Creates a dictionary of dictionaries containing all the needed tags for OWL, RDF, RDFS, XSD.
+        '''
         self.__snsHandler["owl"] = self.__owlNamespace()
         self.__snsHandler["rdf"] = self.__rdfNamespace()
         self.__snsHandler["rdfs"] = self.__rdfsNamespace()
@@ -20,10 +23,16 @@ class StandardNS(object):
 
 
     def getSnsHandler(self):
+        '''
+        @return: a dictionary of dictionaries containing all the needed tags for OWL, RDF, RDFS, XSD
+        '''
         return self.__snsHandler
 
 
     def __owlNamespace(self):
+        '''
+        @return: a dictionary containing all the needed tags for OWL
+        '''
         owlHandler = dict()
         owlHandler["Class"] = OWL.Class
         owlHandler["ObjectProperty"] = OWL.ObjectProperty
@@ -35,6 +44,9 @@ class StandardNS(object):
         
         
     def __rdfNamespace(self):
+        '''
+        @return: a dictionary containing all the needed tags for RDF
+        '''
         rdfHandler = dict()
         rdfHandler["Property"] = RDF.Property
         rdfHandler["type"] = RDF.type
@@ -43,6 +55,9 @@ class StandardNS(object):
         
         
     def __rdfsNamespace(self):
+        '''
+        @return: a dictionary containing all the needed tags for RDFS
+        '''
         rdfsHandler = dict()
         rdfsHandler["subClassOf"] = RDFS.subClassOf
         rdfsHandler["domain"] = RDFS.domain
@@ -51,6 +66,9 @@ class StandardNS(object):
         
         
     def __xsdNamespace(self):
+        '''
+        @return: a dictionary containing all the needed tags for XSD
+        '''
         xsdHandler = dict()
         xsdHandler["string"] = XSD.string
         xsdHandler["int"] = XSD.int

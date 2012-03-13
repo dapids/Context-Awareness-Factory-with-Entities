@@ -45,7 +45,7 @@ class GraphManager(object):
         name = name.lower()
         graph, ns = cntx.getInfo()[1], cntx.getInfo()[2]
         try:
-            typology = Utils.checkClassRange(name, domain, rng)
+            typology = Utils.checkClassRange(name, domain.__name__, rng)
         except SemanticException as e:
             raise e
         else:
@@ -67,7 +67,7 @@ class GraphManager(object):
         name = name.lower()
         graph, ns = cntx.getInfo()[1], cntx.getInfo()[2]
         if not isinstance(rng, (int, str, float, long)):
-            cls.__addIndObjProperty(name, domain, rng.getName(), graph, ns)
+            cls.__addIndObjProperty(name, domain, rng.getId(), graph, ns)
         else:
             cls.__addIndDataProperty(name, domain, rng, graph, ns)
 
@@ -77,7 +77,7 @@ class GraphManager(object):
         name = name.lower()
         graph, ns = cntx.getInfo()[1], cntx.getInfo()[2]
         if not isinstance(rng, (int, str, float, long)):
-            cls.__remIndObjProperty(name, domain, rng.getName(), graph, ns)
+            cls.__remIndObjProperty(name, domain, rng.getId(), graph, ns)
         else:
             cls.__remIndDataProperty(name, domain, rng, graph, ns)
 
