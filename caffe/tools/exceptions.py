@@ -13,7 +13,26 @@ class SemanticException(Exception):
         @type text: str
         @param text: the description of the error
         '''
-        self.text = "Warning: semantic exception. %s" % text
+        self.text = "WARNING: semantic exception. %s" % text
+    
+    def __str__(self):
+        '''
+        Override of the __str__ method.
+        @return: a custom string format
+        '''
+        return self.text+"\n"
+
+
+class InputException(Exception):
+    '''
+    Custom exception.
+    '''
+    def __init__(self, text):
+        '''
+        @type text: str
+        @param text: the description of the error
+        '''
+        self.text = "ERROR: wrong input. %s" % text
     
     def __str__(self):
         '''

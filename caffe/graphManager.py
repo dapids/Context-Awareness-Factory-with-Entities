@@ -4,7 +4,7 @@ Created on Feb 24, 2012
 @author: david
 '''
 
-from rdflib import ConjunctiveGraph, OWL, BNode, Literal
+from rdflib import ConjunctiveGraph, OWL, Literal
 from .standardNS import StandardNS
 from .tools.exceptions import SemanticException
 from .tools.utils import Utils

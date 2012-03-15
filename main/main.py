@@ -11,7 +11,7 @@ import sys
 from caffe.tools.writer import Writer
 
 from environment.person import Person
-from environment.owner import Owner
+from environment.host import Host
 from environment.room import Room
 from environment.thing import Thing
 from environment.guest import Guest
@@ -24,7 +24,7 @@ if __name__ == '__main__':
     cs = ContextSpace("http://caffe.ns/home#")
     
     # create the individuals
-    david = cs.createEntity(Owner, "david")
+    david = cs.createEntity(Host, "david")
     marco = cs.createEntity(Guest, "marco")
     kitchen = cs.createEntity(Room, "kitchen")
     livingRoom = cs.createEntity(Room, "livingRoom")
@@ -58,11 +58,11 @@ if __name__ == '__main__':
 ##===============================================================================
 
     # populate the semantic network with some data
-    david.NAME = "David Sorrentino"
+    david.NAME = "David_Sorrentino"
     david.AGE = 27
     david.ISLOCATED = livingRoom
     
-    marco.NAME = "Marco Sorrentino"
+    marco.NAME = "Marco_Sorrentino"
     marco.AGE = 26
     marco.ISLOCATED = livingRoom
     
@@ -80,7 +80,7 @@ if __name__ == '__main__':
 ## 
 ##===============================================================================
 
-#    # update the semantic network
+    # update the semantic network
 #    del david.TALKSTO[marco]
 #    del david.HOLDS
 #    del david.USES[television]
@@ -101,11 +101,9 @@ if __name__ == '__main__':
             inputData = raw_input("\nData from sensors: ")
         except EOFError:
             sys.exit("\nGoodbye")
-            
+        
         cs.pushData(inputData)
-            
-        print("Validare l'input!!")    
-            
+                        
         # serialize the graph as owl/rdf/xml and upload it on a FTP
         wr = Writer()
         wr.writeOntology(cs.serializeContext(), True)

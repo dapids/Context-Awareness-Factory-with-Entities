@@ -28,10 +28,16 @@ class MultipleProperty(dict):
         
     
     def __delitem__(self, value):
-        GraphManager.removeIndProperty(self.__name, self.__domain, value, self.__cntx)
+        result = None
         try:
-            valueName = value.getId()
-        except:
-            pass
-        print "Deleting individual property: '%s' -> %s -> '%s'\n" % (self.__domain, self.__name, valueName)
-        return dict.__delitem__(self, value)
+            try:
+                valueName = value.getId()
+            except AttributeError:
+                valueName = value
+            result = dict.__delitem__(self, value)
+        except KeyError:
+            raise KeyError
+        else:
+            GraphManager.removeIndProperty(self.__name, self.__domain, value, self.__cntx)
+            print "Deleting individual property: '%s' -> %s -> '%s'\n" % (self.__domain, self.__name, valueName)
+        return result

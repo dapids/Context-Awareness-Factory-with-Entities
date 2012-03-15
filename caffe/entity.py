@@ -8,6 +8,7 @@ from .metaEntity import MetaEntity
 from .graphManager import GraphManager
 from .tools.exceptions import SemanticException
 from .tools.multipleProperty import MultipleProperty as MP
+from .messages.event import AddEvent, DelEvent
 
 class Entity(object):
     '''
@@ -24,8 +25,24 @@ class Entity(object):
         
 
     def __handler(self, event):
-        self.__setattr__(event.getPredicate(), event.getObject())
-#        print("\n\n%s: %s" % (self.__id, repr(event)))
+        if isinstance(event, AddEvent):
+            self.__setattr__(event.getPredicate(), event.getObject())
+        elif isinstance(event, DelEvent):
+            try:
+                prop = self.__getattribute__(event.getPredicate())
+                if event.getObject() is None:
+                    self.__delattr__(event.getPredicate())
+                else:
+                    del prop[event.getObject()]
+            except AttributeError:
+                print("Deletion was not possible. The property '%s %s' does not exist.\n" % (event.getSubject().getId(), event.getPredicate()))
+            except KeyError:
+                print ("Deletion was not possible. The property '%s %s %s' does not exist.\n" % (event.getSubject().getId(), event.getPredicate(), event.getObject()))
+            except TypeError:
+                if prop == event.getObject():
+                    self.__delattr__(event.getPredicate())
+                else:
+                    print("Deletion was not possible. The property '%s %s %s' does not exist.\n" % (event.getSubject().getId(), event.getPredicate(), event.getObject()))
 
 
     def __setattr__(self, name, value):
@@ -49,9 +66,10 @@ class Entity(object):
                         else:
                             try:
                                 finalValue = self.__getattribute__(name)
+                                finalValue.setItem(name, self, value, self._MetaEntity__propertiesDict[name][2])
                             except AttributeError:
                                 finalValue = MP()
-                            finalValue.setItem(name, self, value, self._MetaEntity__propertiesDict[name][2])
+                                finalValue.setItem(name, self, value, self._MetaEntity__propertiesDict[name][2])
                     else:
                         raise SemanticException("The property '%s' expects a value of type '%s'. The value given is of type '%s'." %
                                             (name, self._MetaEntity__propertiesDict[name][1].__name__, type(value).__name__))
@@ -80,7 +98,13 @@ class Entity(object):
             if isinstance(self.__getattribute__(name), MP):
                 for rng in self.__getattribute__(name).keys():
                     GraphManager.removeIndProperty(name, self.__id, rng, self._MetaEntity__propertiesDict[name][2])
+                    try:
+                        rng = rng.getId()
+                    except AttributeError:
+                        pass
                     print "Deleting individual property: '%s' -> %s -> '%s'\n" % (self.__id, name, rng)
+                    prop = self.__getattribute__(name)
+                    prop.clear()
             else:
                 GraphManager.removeIndProperty(name, self.__id, self.__getattribute__(name), self._MetaEntity__propertiesDict[name][2])
                 try:
@@ -89,7 +113,9 @@ class Entity(object):
                     value = self.__getattribute__(name)
                 finally:
                     print "Deleting individual property: '%s' -> %s -> '%s'\n" % (self.__id, name, value)
-        object.__delattr__(self, name)
+                    object.__setattr__(self, name, None)
+        else:
+            object.__delattr__(self, name)
             
         
     def getId(self):

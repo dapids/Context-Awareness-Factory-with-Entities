@@ -7,7 +7,7 @@ Created on Feb 24, 2012
 from .person import Person
 from caffe.entity import Entity
 
-class Owner(Entity, Person):
+class Host(Entity, Person):
     '''
     classdocs
     '''
