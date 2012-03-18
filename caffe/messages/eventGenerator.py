@@ -11,7 +11,7 @@ from ..tools.exceptions import InputException
 
 class EventGenerator(object):
     '''
-    classdocs
+    Checks input data and generates events related to them.
     '''
 
     
@@ -21,6 +21,14 @@ class EventGenerator(object):
     
 
     def __init__(self, disp, dq, nThreads, ri):
+        """
+        @type disp: Dispatcher
+        @param disp: a dispatcher triggering events
+        @type dq: Queue
+        @param dq: a queue of input data to check
+        @type nThreads: int
+        @param nThreads: number of threads to check input data and generate events
+        """
         self.__dispatcher = disp
         self.__dataQueue = dq
         self.__registeredIndividuals = ri
@@ -31,34 +39,59 @@ class EventGenerator(object):
 
     
     def __manageEvent(self):
+        """
+        Executes the procedure to generate an event related to the input.
+        """
         while True:
             data = self.__dataQueue.get()
             try:
-                self.__checkData(data)
+                genEvent = self.__checkData(data)
+                s, p, o = genEvent[1]
+                genEvent[0](self.__getSPO(s, p, o))
             except InputException as e:
                 print e
             self.__dataQueue.task_done()
     
     
     def __checkData(self, data):
+        """
+        Checks the data taken in input and, if they are valid, returns the methods invoke in order to generate the proper events. 
+        @type data: str
+        @param data: input data from sensors
+        @return: a tuple containing the method to call in order to generate the event and its parameters
+        """
+        result = None, None
         if re.match("^\s*(del\s+){0,1}\w+\s+\w+(\s+\w+){0,1};\s*$", data):
             try:
                 (n, s, p, o) = data.split(" ") #@UnusedVariable
-                self.__genDelEvent(self.__getSPO(s, p, o))
+                result = self.__genDelEvent, (s, p, o)
+#                self.__genDelEvent(self.__getSPO(s, p, o))
             except ValueError:
                 prop = data.split(" ")
                 if prop[0] == "del":
                     s, p = prop[1], prop[2]
-                    self.__genDelEvent(self.__getSPO(s, p))
+                    result = self.__genDelEvent, (s, p, None)
+#                    self.__genDelEvent(self.__getSPO(s, p))
                 else:
                     s, p, o = prop[0], prop[1], prop[2]
-                    self.__genAddEvent(self.__getSPO(s, p, o))
-                    
+#                    self.__genAddEvent(self.__getSPO(s, p, o))
+                    result = self.__genAddEvent, (s, p, o)
         else:
-            raise InputException("Input allowed: '[not] subject predicate object;'")
-        
+            raise InputException("Input allowed: '[del] subject predicate object;'")
+        return result
     
-    def __getSPO(self, s, p, o=None):
+    
+    def __getSPO(self, s, p, o):
+        """
+        Takes a proposition of elements of type str and returns a proposition of elements of proper types.
+        @type s: str
+        @param s: the subject of the proposition
+        @type p: str 
+        @param p: the predicate of the proposition
+        @type o: str
+        @param o: the object of the proposition
+        @return: a tuple containing the proposition, after giving subject, predicate and object the proper types 
+        """
         try:
             s = self.__registeredIndividuals[s]
         except KeyError:
@@ -85,8 +118,24 @@ class EventGenerator(object):
         
     
     def __genDelEvent(self, data):
-        self.__dispatcher.dispatch(DelEvent(data))
+        """
+        Generates a DelEvent.
+        @type data: tuple
+        @param data: the proposition representing the data to delete
+        """
+        try:
+            self.__dispatcher.dispatch(DelEvent(data))
+        except ValueError as e:
+            print e
        
         
     def __genAddEvent(self, data):
-        self.__dispatcher.dispatch(AddEvent(data))
+        """
+        Generates an AddEvent.
+        @type data: tuple
+        @param data: the proposition representing the data to insert
+        """
+        try:
+            self.__dispatcher.dispatch(AddEvent(data))
+        except ValueError as e:
+            print e

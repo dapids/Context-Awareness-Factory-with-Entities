@@ -7,7 +7,7 @@ Created on Mar 12, 2012
 from caffe.entity import Entity
 from .obj import Obj
 
-class ActiveObj(object, Entity, Obj):
+class ActiveObj(Entity, Obj):
     '''
     classdocs
     '''

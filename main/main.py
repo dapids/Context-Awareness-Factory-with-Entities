@@ -5,9 +5,10 @@ Created on Jan 30, 2012
 @author: david
 '''
 
+from rdflib import plugin, query, Namespace
+
 from caffe.contextSpace import ContextSpace
 
-import sys
 from caffe.tools.writer import Writer
 
 from environment.person import Person
@@ -26,6 +27,7 @@ if __name__ == '__main__':
     # create the individuals
     david = cs.createEntity(Host, "david")
     marco = cs.createEntity(Guest, "marco")
+    andrea = cs.createEntity(Guest, "andrea")
     kitchen = cs.createEntity(Room, "kitchen")
     livingRoom = cs.createEntity(Room, "livingRoom")
     bowl = cs.createEntity(PassiveObj, "bowl")
@@ -39,15 +41,16 @@ if __name__ == '__main__':
     
     # create a local context and define the properties belonging to it
     info = cs.setLocalContext("info")
-    info.defineProperties(("name", 1), ("age", 1))
+    info.defineProperties(("name", 1), ("age", 1), ("graduated", 1))
     
     # create a local context and define the properties belonging to it
     actions = cs.setLocalContext("actions")
-    actions.defineProperties(("holds", 0), ("uses", 0), ("talksTo", 0))
+    actions.defineProperties(("holds", 0), ("uses", 0), ("talksTo", 0, "s"))
     
     # define the domain and the range of the properties
     Person.NAME = str
     Person.AGE = int
+    Person.GRADUATED = bool
     Thing.ISLOCATED = Room
     Person.USES = ActiveObj
     Person.HOLDS = PassiveObj
@@ -66,6 +69,8 @@ if __name__ == '__main__':
     marco.AGE = 26
     marco.ISLOCATED = livingRoom
     
+    andrea.NAME = "Andrea_Monacchi"
+    
     bowl.ISLOCATED = livingRoom
     spoon.ISLOCATED = livingRoom
     television.ISLOCATED = livingRoom
@@ -75,6 +80,8 @@ if __name__ == '__main__':
     david.HOLDS = spoon
     david.HOLDS = bowl
     david.USES = television
+    andrea.TALKSTO = marco
+    david.GRADUATED = True
     
 ##===============================================================================
 ## 
@@ -90,20 +97,31 @@ if __name__ == '__main__':
 ##===============================================================================
 ## 
 ##===============================================================================
-
-    # list all the contexts
-    print "Contexts list:"
-    for index, entry in enumerate(cs.getGlobalContext()[0].contexts()):
-        print "%s: %s" % (index, entry)
-    
-    while True:
-        try:
-            inputData = raw_input("\nData from sensors: ")
-        except EOFError:
-            sys.exit("\nGoodbye")
         
-        cs.pushData(inputData)
-                        
-        # serialize the graph as owl/rdf/xml and upload it on a FTP
-        wr = Writer()
-        wr.writeOntology(cs.serializeContext(), True)
+    cs.printContextsList()
+        
+    plugin.register("sparql", query.Processor, "rdfextras.sparql.processor", "Processor")
+    plugin.register("sparql", query.Result, "rdfextras.sparql.query", "SPARQLQueryResult")
+    
+    q = cs.getGlobalContext()[0].query(
+                                       """SELECT DISTINCT ?name
+                                       WHERE {
+                                           ?a home:talksto ?b .
+                                           ?a home:name ?name
+                                       }""",
+                                       initNs = dict(home=Namespace("http://caffe.ns/home#")))
+    
+    for row in q.result:
+        print ("%s is talking" % row)
+    
+#    while True:
+#        try:
+#            inputData = raw_input("\nData from sensors: ")
+#        except EOFError:
+#            break
+#        
+#        cs.pushData(inputData)                
+#    
+    #serialize the graph as owl/rdf/xml and upload it on a FTP
+    wr = Writer()
+    wr.writeOntology(cs.serializeContext(), True)

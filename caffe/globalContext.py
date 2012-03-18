@@ -19,7 +19,7 @@ class GlobalContext(object):
 
     def __init__(self, gns):
         '''
-        It creates a graph and a namespace for a context.
+        Creates a graph and a namespace for a global context.
         @type gns: str 
         @param gns: the string representing the namespace related to the context
         '''

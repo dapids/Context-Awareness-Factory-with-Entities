@@ -72,7 +72,7 @@ class StandardNS(object):
         xsdHandler = dict()
         xsdHandler["string"] = XSD.string
         xsdHandler["int"] = XSD.int
-        xsdHandler["long"] = XSD.long
+        xsdHandler["boolean"] = XSD.boolean
         xsdHandler["float"] = XSD.float
         xsdHandler["nonNegativeInteger"] = XSD.nonNegativeInteger
         return xsdHandler

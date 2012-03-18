@@ -33,16 +33,16 @@ class Utils(object):
         @param name: the name of the property to check
         @type domain: str
         @param domain: the name of the domain class
-        @type rng: type / [int, str, long, float, boolean]
+        @type rng: type / [int, str, bool, float]
         @param rng: the range class to check
         @return: the typology of property. None if the value assigned to the property is not valid
         '''
         result = None
         if isinstance(rng, type(type)) and cls.isSubOfEntity(rng):
             result = "objectProperty"
-        elif rng in [int, long, float, str]:
+        elif rng in [int, bool, float, str]:
             result = "dataProperty"
         else:
             raise SemanticException(("The value assigned to '%s.%s' should be either a subclass of 'Entity' " +
-                                    "or one of the following ones [int, long, float, string].") % (domain, name))
+                                    "or one of the following ones [int, bool, float, string].") % (domain, name))
         return result

@@ -83,13 +83,16 @@ class Entity(object):
             except SemanticException as e:
                 print e
             else:
-                GraphManager.mapIndProperty(name, self.__id, value, self._MetaEntity__propertiesDict[name][2])
+                GraphManager.mapIndProperty(name, self.__id, value, self._MetaEntity__propertiesDict[name][2],
+                                            self._MetaEntity__propertiesDict[name][4])
                 try:
                     propValue = value.getId()
                 except AttributeError:
                     propValue = value
                 finally:
                     print "Mapping individual property: '%s' -> %s -> '%s'\n" % (self.__id, name, propValue)
+                    if self._MetaEntity__propertiesDict[name][4] == "s":
+                        print "Mapping individual symmetric property: '%s' -> %s -> '%s'\n" % (propValue, name, self.__id)
         object.__setattr__(self, name, finalValue)
         
         

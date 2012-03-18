@@ -17,7 +17,7 @@ class SemanticException(Exception):
     
     def __str__(self):
         '''
-        Override of the __str__ method.
+        Override of the __str__ method to give the text a proper format.
         @return: a custom string format
         '''
         return self.text+"\n"
@@ -36,7 +36,7 @@ class InputException(Exception):
     
     def __str__(self):
         '''
-        Override of the __str__ method.
+        Override of the __str__ method to give the text a proper format.
         @return: a custom string format
         '''
         return self.text+"\n"

@@ -32,11 +32,10 @@ class Writer(object):
         @param upload: if True it uploads the ontology on a FTP
         '''
         self.__ontFile.write(ont)
-        self.__ontFile.close()
         if upload:
             self.__ontFile = open(self.__ontology["localpath"] + os.sep + self.__ontology["filename"], 'rb')
             self.uploadOntology()
-            self.__ontFile.close()
+        self.__ontFile.close()
       
       
     def uploadOntology(self):

@@ -19,7 +19,15 @@ class MultipleProperty(dict):
     
     def setItem(self, name, domain, rng, cntx):
         '''
-        
+        Sets new items in the dict.
+        @type name: str
+        @param name: the name of the property
+        @type domain: object
+        @param domain: the domain of the property
+        @type rng: object / int / float / bool / str
+        @param rng: the range of the property
+        @type cntx: tuple
+        @param cntx: the local context in which the property is
         '''
         self.__domain = domain.getId()
         self.__cntx = cntx
@@ -28,6 +36,12 @@ class MultipleProperty(dict):
         
     
     def __delitem__(self, value):
+        """
+        Overrides the method to delete an item from the dict. Every time an item is deleted,
+        it updated the semantic network.
+        @type value: object / int / float / bool / str
+        @param value: the object to delete
+        """
         result = None
         try:
             try:
