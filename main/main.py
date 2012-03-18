@@ -5,8 +5,6 @@ Created on Jan 30, 2012
 @author: david
 '''
 
-from rdflib import plugin, query, Namespace
-
 from caffe.contextSpace import ContextSpace
 
 from caffe.tools.writer import Writer
@@ -99,20 +97,6 @@ if __name__ == '__main__':
 ##===============================================================================
         
     cs.printContextsList()
-        
-    plugin.register("sparql", query.Processor, "rdfextras.sparql.processor", "Processor")
-    plugin.register("sparql", query.Result, "rdfextras.sparql.query", "SPARQLQueryResult")
-    
-    q = cs.getGlobalContext()[0].query(
-                                       """SELECT DISTINCT ?name
-                                       WHERE {
-                                           ?a home:talksto ?b .
-                                           ?a home:name ?name
-                                       }""",
-                                       initNs = dict(home=Namespace("http://caffe.ns/home#")))
-    
-    for row in q.result:
-        print ("%s is talking" % row)
     
 #    while True:
 #        try:

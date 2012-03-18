@@ -11,8 +11,10 @@ from .localContext import LocalContext
 from .tools.exceptions import SemanticException
 from .globalContext import GlobalContext
 from .tools.utils import Utils
-from .messages.dispatcher import Dispatcher
-from .messages.eventGenerator import EventGenerator
+from .events.dispatcher import Dispatcher
+from .events.eventGenerator import EventGenerator
+from .querySistem.queryServer import QueryServer
+import socket, fcntl, struct
 
 class ContextSpace(object):
     '''
@@ -27,6 +29,7 @@ class ContextSpace(object):
     __propertiesDict = dict()
     __dispatcher = None
     __dataQueue = None
+    __address = None
         
         
     def __init__(self, gns):
@@ -39,7 +42,9 @@ class ContextSpace(object):
         self.__dispatcher = Dispatcher()
         self.__dataQueue = Queue()
         EventGenerator(self.__dispatcher, self.__dataQueue, 1, self.__registeredIndividuals)
-        print("Creating new context-space: %s\n%s\n" % (gns[gns.rfind("/")+1:gns.find("#")].upper(), self.__globalContext))
+        print("Creating new context-space: %s\n%s" % (gns[gns.rfind("/")+1:gns.find("#")].upper(), self.__globalContext))
+        self.__address = self.__lauchServer()
+        print("Query server available @ %s, %s\n" % self.__address)
     
     
     def getGlobalContext(self):
@@ -47,6 +52,10 @@ class ContextSpace(object):
         @return: a tuple containing info about the global context related to the context space
         """
         return self.__globalContext.getInfo()
+    
+    
+    def getCSAddress(self):
+        return self.__address
     
     
     def setLocalContext(self, name):
@@ -107,6 +116,22 @@ class ContextSpace(object):
         for index, entry in enumerate(self.getGlobalContext()[0].contexts()):
             print "%s: %s" % (index, entry)
         print("")
+    
+    
+    def __lauchServer(self):
+        address = None
+        sck = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        interfaces = "eth0", "wlan0"
+        for iface in interfaces:
+            try:
+                address = socket.inet_ntoa(fcntl.ioctl(sck.fileno(),0x8915,struct.pack('256s', iface[:15]))[20:24]), 7777
+            except IOError:
+                pass
+            else:
+                break
+        qs = QueryServer(address, self.__globalContext)
+        qs.start()
+        return address
     
     
     def pushData(self, data):

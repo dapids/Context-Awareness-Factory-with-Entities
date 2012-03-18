@@ -15,6 +15,7 @@ class GlobalContext(object):
     
     __globalNS = None
     __globalGraph = None
+    __name = None
 
 
     def __init__(self, gns):
@@ -25,13 +26,14 @@ class GlobalContext(object):
         '''
         self.__globalGraph = GraphManager.createGlobalGraph(gns)
         self.__globalNS = Namespace(gns)
+        self.__name = gns[gns.rfind("/")+1:gns.find("#")]
         
     
     def getInfo(self):
         '''
         @return: a tuple containing a global graph and a namespace
         '''
-        return (self.__globalGraph, self.__globalNS)
+        return (self.__globalGraph, self.__globalNS, self.__name)
     
     
     def __str__(self):

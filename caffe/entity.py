@@ -8,7 +8,7 @@ from .metaEntity import MetaEntity
 from .graphManager import GraphManager
 from .tools.exceptions import SemanticException
 from .tools.multipleProperty import MultipleProperty as MP
-from .messages.event import AddEvent, DelEvent
+from .events.event import AddEvent, DelEvent
 
 class Entity(object):
     '''
