@@ -12,7 +12,6 @@ class Retriever(object):
     classdocs
     '''
 
-
     __globalContext = None
 
 

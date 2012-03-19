@@ -6,6 +6,8 @@ Created on Feb 12, 2012
 
 from sets import Set
 from Queue import Queue
+import socket, fcntl, struct
+from threading import Thread
 from .graphManager import GraphManager
 from .localContext import LocalContext
 from .tools.exceptions import SemanticException
@@ -13,8 +15,8 @@ from .globalContext import GlobalContext
 from .tools.utils import Utils
 from .events.dispatcher import Dispatcher
 from .events.eventGenerator import EventGenerator
-from .querySistem.queryServer import QueryServer
-import socket, fcntl, struct
+from .querySystem.queryServer import QueryServer, QSHandler
+from .querySystem.retriever import Retriever
 
 class ContextSpace(object):
     '''
@@ -29,7 +31,8 @@ class ContextSpace(object):
     __propertiesDict = dict()
     __dispatcher = None
     __dataQueue = None
-    __address = None
+    __queryServerAddress = None
+    __performQuery = None
         
         
     def __init__(self, gns):
@@ -42,9 +45,8 @@ class ContextSpace(object):
         self.__dispatcher = Dispatcher()
         self.__dataQueue = Queue()
         EventGenerator(self.__dispatcher, self.__dataQueue, 1, self.__registeredIndividuals)
+        self.__performQuery = Retriever(self.getGlobalContext()).performQuery
         print("Creating new context-space: %s\n%s" % (gns[gns.rfind("/")+1:gns.find("#")].upper(), self.__globalContext))
-        self.__address = self.__lauchServer()
-        print("Query server available @ %s, %s\n" % self.__address)
     
     
     def getGlobalContext(self):
@@ -90,7 +92,7 @@ class ContextSpace(object):
             GraphManager.mapIndividual(identifier, cl.__name__, self.__globalContext)
             print "Mapping individual: '%s' (%s)\n" % (identifier, cl.__name__)
             ind = cl()
-            ind(identifier, self.__dispatcher)
+            ind(identifier, self.__dispatcher, self.__performQuery)
             self.__registeredIndividuals[identifier] = ind
         else:
             print "It is not possible to create the entity '%s'. An entity called in the same way already exists.\n" % identifier
@@ -118,7 +120,7 @@ class ContextSpace(object):
         print("")
     
     
-    def __lauchServer(self):
+    def __launchQueryServer(self):
         address = None
         sck = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         interfaces = "eth0", "wlan0"
@@ -129,9 +131,20 @@ class ContextSpace(object):
                 pass
             else:
                 break
-        qs = QueryServer(address, self.__globalContext)
-        qs.start()
-        return address
+        qs = QueryServer(address, QSHandler, self.__performQuery)
+        qsThread = Thread(target=qs.serve_forever)
+        qsThread.daemon = True
+        qsThread.start()
+        return address, qs
+    
+    
+    def launchServers(self):
+        qs = self.__launchQueryServer()
+        self.__queryServerAddress = qs[0]
+        print("Query server available @ %s, %s\n" % self.__queryServerAddress)
+        raw_input("Press a key to shutdown the servers.\n\n")
+        qs[1].shutdown()
+        print("Servers are down. Quit.")
     
     
     def pushData(self, data):

@@ -98,6 +98,8 @@ if __name__ == '__main__':
         
     cs.printContextsList()
     
+    cs.launchServers()
+    
 #    while True:
 #        try:
 #            inputData = raw_input("\nData from sensors: ")
@@ -107,5 +109,5 @@ if __name__ == '__main__':
 #        cs.pushData(inputData)                
 #    
     #serialize the graph as owl/rdf/xml and upload it on a FTP
-    wr = Writer()
-    wr.writeOntology(cs.serializeContext(), True)
+#    wr = Writer()
+#    wr.writeOntology(cs.serializeContext(), True)

@@ -17,13 +17,15 @@ class Entity(object):
     
     __metaclass__ = MetaEntity
     __id = None
+    __performQuery = None
 
 
-    def __call__(self, identificator, dispatcher):
+    def __call__(self, identificator, dispatcher, performQuery):
         self.__id = identificator
         dispatcher.subscribe(self, self.__handler)
+        self.__performQuery = performQuery
         
-
+        
     def __handler(self, event):
         if isinstance(event, AddEvent):
             self.__setattr__(event.getPredicate(), event.getObject())
@@ -123,3 +125,8 @@ class Entity(object):
         
     def getId(self):
         return self.__id
+    
+    
+    def ask(self, something):
+        response = self.__performQuery(something)
+        return response
