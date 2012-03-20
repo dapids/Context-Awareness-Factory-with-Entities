@@ -1,0 +1,10 @@
+bowl islocated livingRoom;
+spoon islocated livingRoom;
+television islocated livingRoom;
+toaster islocated kitchen;
+david talksto marco;
+david holds spoon;
+david holds bowl;
+david uses television;
+andrea talksto marco;
+david graduated True;
