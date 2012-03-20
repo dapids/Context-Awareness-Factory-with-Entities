@@ -35,7 +35,7 @@ class MetaEntity(type):
                 if (self.__propertiesDict[name][0] is None) and (self.__propertiesDict[name][1] is None):
                     GraphManager.mapClassProperty(name, self, value, self.__propertiesDict[name][2])
                 else:
-                    raise SemanticException (("The property '%s' have been already defined as '%s %s %s'." +
+                    raise SemanticException (("The property '%s' has been already defined as '%s %s %s'. " +
                                               "It is not possible to override it.") % (name,
                                                                                        self.__propertiesDict[name][0].__name__,
                                                                                        name, self.__propertiesDict[name][1].__name__))
