@@ -3,7 +3,7 @@ Created on Mar 1, 2012
 
 @author: david
 '''
-import caffe
+import cafe
 from .exceptions import SemanticException
 
 class Utils(object):
@@ -21,7 +21,7 @@ class Utils(object):
         @return: True or False, depending on whether or not the class checked is subclass of Entity, respectively
         '''
         result = False
-        if cl is not caffe.entity.Entity and issubclass(cl, caffe.entity.Entity):
+        if cl is not cafe.entity.Entity and issubclass(cl, cafe.entity.Entity):
             result = True
         return result
     

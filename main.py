@@ -5,8 +5,8 @@ Created on Jan 17, 2012
 @author: david
 '''
 
-from caffe.contextSpace import ContextSpace
-from caffe.tools.writer import Writer
+from cafe.contextSpace import ContextSpace
+from cafe.tools.writer import Writer
 
 from environment.person import Person
 from environment.host import Host

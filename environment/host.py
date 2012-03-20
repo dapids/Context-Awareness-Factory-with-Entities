@@ -5,7 +5,7 @@ Created on Feb 24, 2012
 '''
 
 from .person import Person
-from caffe.entity import Entity
+from cafe.entity import Entity
 
 class Host(Entity, Person):
     '''
