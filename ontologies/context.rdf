@@ -5,92 +5,103 @@
   xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
   xmlns:home="http://caffe.ns/home#"
 >
-  <owl:DatatypeProperty rdf:about="http://caffe.ns/home#age">
+  <owl:DatatypeProperty rdf:about="http://caffe.ns/home#graduated">
     <rdfs:domain rdf:resource="http://caffe.ns/home#Person"/>
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
   </owl:DatatypeProperty>
-  <owl:ObjectProperty rdf:about="http://caffe.ns/home#holds">
+  <owl:ObjectProperty rdf:about="http://caffe.ns/home#talksto">
     <rdfs:domain rdf:resource="http://caffe.ns/home#Person"/>
-    <rdfs:range rdf:resource="http://caffe.ns/home#PassiveObj"/>
+    <rdfs:range rdf:resource="http://caffe.ns/home#Person"/>
   </owl:ObjectProperty>
   <owl:ObjectProperty rdf:about="http://caffe.ns/home#islocated">
     <rdfs:domain rdf:resource="http://caffe.ns/home#Thing"/>
     <rdfs:range rdf:resource="http://caffe.ns/home#Room"/>
   </owl:ObjectProperty>
-  <owl:DatatypeProperty rdf:about="http://caffe.ns/home#graduated">
-    <rdfs:domain rdf:resource="http://caffe.ns/home#Person"/>
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
-  </owl:DatatypeProperty>
-  <home:ActiveObj rdf:about="http://caffe.ns/home#toaster">
-    <home:islocated>
-      <home:Room rdf:about="http://caffe.ns/home#kitchen"/>
-    </home:islocated>
-  </home:ActiveObj>
-  <owl:ObjectProperty rdf:about="http://caffe.ns/home#talksto">
-    <rdfs:domain rdf:resource="http://caffe.ns/home#Person"/>
-    <rdfs:range rdf:resource="http://caffe.ns/home#Person"/>
-  </owl:ObjectProperty>
   <owl:DatatypeProperty rdf:about="http://caffe.ns/home#name">
     <rdfs:domain rdf:resource="http://caffe.ns/home#Person"/>
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://caffe.ns/home#age">
+    <rdfs:domain rdf:resource="http://caffe.ns/home#Person"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
   </owl:DatatypeProperty>
   <owl:ObjectProperty rdf:about="http://caffe.ns/home#uses">
     <rdfs:domain rdf:resource="http://caffe.ns/home#Person"/>
     <rdfs:range rdf:resource="http://caffe.ns/home#ActiveObj"/>
   </owl:ObjectProperty>
-  <owl:Class rdf:about="http://caffe.ns/home#Obj">
-    <rdfs:subClassOf rdf:resource="http://caffe.ns/home#Thing"/>
-  </owl:Class>
-  <home:Room rdf:about="http://caffe.ns/home#livingRoom"/>
-  <owl:Class rdf:about="http://caffe.ns/home#Thing"/>
+  <owl:ObjectProperty rdf:about="http://caffe.ns/home#holds">
+    <rdfs:domain rdf:resource="http://caffe.ns/home#Person"/>
+    <rdfs:range rdf:resource="http://caffe.ns/home#PassiveObj"/>
+  </owl:ObjectProperty>
   <owl:Class rdf:about="http://caffe.ns/home#Guest">
-    <rdfs:subClassOf rdf:resource="http://caffe.ns/home#Person"/>
-  </owl:Class>
-  <home:Guest rdf:about="http://caffe.ns/home#andrea">
-    <home:talksto>
-      <home:Guest rdf:about="http://caffe.ns/home#marco">
-        <home:talksto rdf:resource="http://caffe.ns/home#andrea"/>
-        <home:talksto rdf:resource="http://caffe.ns/home#david"/>
-        <home:age rdf:datatype="http://www.w3.org/2001/XMLSchema#int">26</home:age>
-        <home:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Marco_Sorrentino</home:name>
-        <home:islocated rdf:resource="http://caffe.ns/home#livingRoom"/>
-      </home:Guest>
-    </home:talksto>
-    <home:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Andrea_Monacchi</home:name>
-  </home:Guest>
-  <owl:Class rdf:about="http://caffe.ns/home#Person">
-    <rdfs:subClassOf rdf:resource="http://caffe.ns/home#Thing"/>
-  </owl:Class>
-  <owl:Class rdf:about="http://caffe.ns/home#Room"/>
-  <home:Host rdf:about="http://caffe.ns/home#david">
-    <home:age rdf:datatype="http://www.w3.org/2001/XMLSchema#int">27</home:age>
-    <home:holds>
-      <home:PassiveObj rdf:about="http://caffe.ns/home#spoon">
-        <home:islocated rdf:resource="http://caffe.ns/home#livingRoom"/>
-      </home:PassiveObj>
-    </home:holds>
-    <home:holds>
-      <home:PassiveObj rdf:about="http://caffe.ns/home#bowl">
-        <home:islocated rdf:resource="http://caffe.ns/home#livingRoom"/>
-      </home:PassiveObj>
-    </home:holds>
-    <home:graduated rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">True</home:graduated>
-    <home:uses>
-      <home:ActiveObj rdf:about="http://caffe.ns/home#television">
-        <home:islocated rdf:resource="http://caffe.ns/home#livingRoom"/>
-      </home:ActiveObj>
-    </home:uses>
-    <home:islocated rdf:resource="http://caffe.ns/home#livingRoom"/>
-    <home:talksto rdf:resource="http://caffe.ns/home#marco"/>
-    <home:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string">David_Sorrentino</home:name>
-  </home:Host>
-  <owl:Class rdf:about="http://caffe.ns/home#Host">
     <rdfs:subClassOf rdf:resource="http://caffe.ns/home#Person"/>
   </owl:Class>
   <owl:Class rdf:about="http://caffe.ns/home#ActiveObj">
     <rdfs:subClassOf rdf:resource="http://caffe.ns/home#Obj"/>
   </owl:Class>
+  <home:ActiveObj rdf:about="http://caffe.ns/home#television">
+    <home:islocated>
+      <home:Room rdf:about="http://caffe.ns/home#livingRoom">
+        <home:ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">livingRoom</home:ID>
+      </home:Room>
+    </home:islocated>
+    <home:ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">television</home:ID>
+  </home:ActiveObj>
   <owl:Class rdf:about="http://caffe.ns/home#PassiveObj">
     <rdfs:subClassOf rdf:resource="http://caffe.ns/home#Obj"/>
+  </owl:Class>
+  <home:ActiveObj rdf:about="http://caffe.ns/home#toaster">
+    <home:islocated>
+      <home:Room rdf:about="http://caffe.ns/home#kitchen">
+        <home:ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">kitchen</home:ID>
+      </home:Room>
+    </home:islocated>
+    <home:ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">toaster</home:ID>
+  </home:ActiveObj>
+  <home:PassiveObj rdf:about="http://caffe.ns/home#spoon">
+    <home:islocated rdf:resource="http://caffe.ns/home#livingRoom"/>
+    <home:ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">spoon</home:ID>
+  </home:PassiveObj>
+  <home:Guest rdf:about="http://caffe.ns/home#marco">
+    <home:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Marco_Sorrentino</home:name>
+    <home:talksto>
+      <home:Guest rdf:about="http://caffe.ns/home#andrea">
+        <home:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Andrea_Monacchi</home:name>
+        <home:talksto rdf:resource="http://caffe.ns/home#marco"/>
+        <home:ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">andrea</home:ID>
+      </home:Guest>
+    </home:talksto>
+    <home:talksto>
+      <home:Host rdf:about="http://caffe.ns/home#david">
+        <home:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string">David_Sorrentino</home:name>
+        <home:talksto rdf:resource="http://caffe.ns/home#marco"/>
+        <home:uses rdf:resource="http://caffe.ns/home#toaster"/>
+        <home:uses rdf:resource="http://caffe.ns/home#television"/>
+        <home:holds rdf:resource="http://caffe.ns/home#bowl"/>
+        <home:holds rdf:resource="http://caffe.ns/home#spoon"/>
+        <home:graduated rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">True</home:graduated>
+        <home:age rdf:datatype="http://www.w3.org/2001/XMLSchema#int">27</home:age>
+        <home:ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">david</home:ID>
+        <home:islocated rdf:resource="http://caffe.ns/home#livingRoom"/>
+      </home:Host>
+    </home:talksto>
+    <home:age rdf:datatype="http://www.w3.org/2001/XMLSchema#int">26</home:age>
+    <home:ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">marco</home:ID>
+    <home:islocated rdf:resource="http://caffe.ns/home#livingRoom"/>
+  </home:Guest>
+  <home:PassiveObj rdf:about="http://caffe.ns/home#bowl">
+    <home:islocated rdf:resource="http://caffe.ns/home#livingRoom"/>
+    <home:ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">bowl</home:ID>
+  </home:PassiveObj>
+  <owl:Class rdf:about="http://caffe.ns/home#Room"/>
+  <owl:Class rdf:about="http://caffe.ns/home#Obj">
+    <rdfs:subClassOf rdf:resource="http://caffe.ns/home#Thing"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://caffe.ns/home#Thing"/>
+  <owl:Class rdf:about="http://caffe.ns/home#Host">
+    <rdfs:subClassOf rdf:resource="http://caffe.ns/home#Person"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://caffe.ns/home#Person">
+    <rdfs:subClassOf rdf:resource="http://caffe.ns/home#Thing"/>
   </owl:Class>
 </rdf:RDF>

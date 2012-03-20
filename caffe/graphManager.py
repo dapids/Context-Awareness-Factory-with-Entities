@@ -101,6 +101,7 @@ class GraphManager(object):
         graph = gc.getInfo()[0]
         ns = gc.getInfo()[1]
         graph.add((ns[identifier], cls.__sns["rdf"]["type"], ns[cl]))
+        graph.add((ns[identifier], ns["ID"], Literal(identifier, datatype=cls.__sns["xsd"]["string"])))
 
 
     @classmethod

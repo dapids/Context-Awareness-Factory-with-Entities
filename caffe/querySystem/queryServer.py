@@ -30,7 +30,7 @@ class QSHandler(SocketServer.BaseRequestHandler):
         '''
         # self.request is the TCP socket connected to the client
         self.data = self.request.recv(1024).strip()
-        print ("QueryServer: sending result to the client @ %s" % (self.client_address[0]))
+        print ("QUERY_SERVER: sending results to the client @ %s\n" % (self.client_address[0]))
         res = self.server.performQuery(self.data)
         self.request.sendall(pickle.dumps(res))
         

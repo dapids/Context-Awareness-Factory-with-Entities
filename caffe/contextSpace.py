@@ -1,5 +1,5 @@
 '''
-Created on Feb 12, 2012
+Created on Gen 17, 2012
 
 @author: david
 '''
@@ -17,12 +17,12 @@ from .events.dispatcher import Dispatcher
 from .events.eventGenerator import EventGenerator
 from .querySystem.queryServer import QueryServer, QSHandler
 from .querySystem.retriever import Retriever
+from .sensors.sensorsServer import SensorsServer, SSHandler
 
 class ContextSpace(object):
     '''
     classdocs
     '''
-    
     
     __globalContext = None
     __localContexts = dict()
@@ -31,7 +31,8 @@ class ContextSpace(object):
     __propertiesDict = dict()
     __dispatcher = None
     __dataQueue = None
-    __queryServerAddress = None
+    __queryServerAddress = [None, 7777]
+    __sensorsServerAddress = [None, 9999]
     __performQuery = None
         
         
@@ -44,7 +45,7 @@ class ContextSpace(object):
         self.__globalContext = GlobalContext(gns)
         self.__dispatcher = Dispatcher()
         self.__dataQueue = Queue()
-        EventGenerator(self.__dispatcher, self.__dataQueue, 1, self.__registeredIndividuals)
+        EventGenerator(self.__dispatcher, self.__dataQueue, 2, self.__registeredIndividuals)
         self.__performQuery = Retriever(self.getGlobalContext()).performQuery
         print("Creating new context-space: %s\n%s" % (gns[gns.rfind("/")+1:gns.find("#")].upper(), self.__globalContext))
     
@@ -54,10 +55,6 @@ class ContextSpace(object):
         @return: a tuple containing info about the global context related to the context space
         """
         return self.__globalContext.getInfo()
-    
-    
-    def getCSAddress(self):
-        return self.__address
     
     
     def setLocalContext(self, name):
@@ -120,37 +117,45 @@ class ContextSpace(object):
         print("")
     
     
-    def __launchQueryServer(self):
-        address = None
+    def __getAddress(self):
+        address = "127.0.0.1"
         sck = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         interfaces = "eth0", "wlan0"
         for iface in interfaces:
             try:
-                address = socket.inet_ntoa(fcntl.ioctl(sck.fileno(),0x8915,struct.pack('256s', iface[:15]))[20:24]), 7777
+                address = socket.inet_ntoa(fcntl.ioctl(sck.fileno(),0x8915,struct.pack('256s', iface[:15]))[20:24])
             except IOError:
                 pass
             else:
                 break
-        qs = QueryServer(address, QSHandler, self.__performQuery)
-        qsThread = Thread(target=qs.serve_forever)
-        qsThread.daemon = True
-        qsThread.start()
-        return address, qs
+        return address
     
     
     def launchServers(self):
-        qs = self.__launchQueryServer()
-        self.__queryServerAddress = qs[0]
-        print("Query server available @ %s, %s\n" % self.__queryServerAddress)
-        raw_input("Press a key to shutdown the servers.\n\n")
-        qs[1].shutdown()
-        print("Servers are down. Quit.")
-    
-    
-    def pushData(self, data):
-        """
-        Adds to the task-queue a new data taken from the sensors.
-        @type data: str
-        @param data: data from sensors
-        """
-        self.__dataQueue.put(data)
+        address = self.__getAddress()
+        
+        self.__queryServerAddress[0] = address
+        qs = QueryServer(tuple(self.__queryServerAddress), QSHandler, self.__performQuery)
+        qsThread = Thread(target=qs.serve_forever)
+        qsThread.daemon = True
+        qsThread.start()
+        print("Query server available @ %s\n" % self.__queryServerAddress)
+        
+        self.__sensorsServerAddress[0] = address
+        ss = SensorsServer(tuple(self.__sensorsServerAddress), SSHandler, self.__dataQueue)
+        ssThread = Thread(target=ss.serve_forever)
+        ssThread.daemon = True
+        ssThread.start()
+        print("Sensors server available @ %s\n" % self.__sensorsServerAddress)
+        
+        try:
+            raw_input("Press a key to shutdown the servers.\n\n")
+        except KeyboardInterrupt:
+            print ""
+        except EOFError:
+            print ""
+        finally:
+            print "Shutting down servers..."
+            qs.shutdown()
+            ss.shutdown()
+            print("Servers are down. Quit.")

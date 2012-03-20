@@ -1,12 +1,11 @@
 
 '''
-Created on Jan 30, 2012
+Created on Jan 17, 2012
 
 @author: david
 '''
 
 from caffe.contextSpace import ContextSpace
-
 from caffe.tools.writer import Writer
 
 from environment.person import Person
@@ -99,15 +98,7 @@ if __name__ == '__main__':
     cs.printContextsList()
     
     cs.launchServers()
-    
-#    while True:
-#        try:
-#            inputData = raw_input("\nData from sensors: ")
-#        except EOFError:
-#            break
-#        
-#        cs.pushData(inputData)                
-#    
+
     #serialize the graph as owl/rdf/xml and upload it on a FTP
-#    wr = Writer()
-#    wr.writeOntology(cs.serializeContext(), True)
+    wr = Writer()
+    wr.writeOntology(cs.serializeContext(), True)
