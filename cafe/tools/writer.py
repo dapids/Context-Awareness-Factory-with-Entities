@@ -47,4 +47,4 @@ class Writer(object):
         session.storbinary("STOR context.rdf", self.__ontFile)
         session.quit()
         self.__ontFile.close()
-        print "Semantic network uploaded on '%s'!" % (self.__ontology["ftpaddr"])
+        print "OWL ontology uploaded on '%s'!" % (self.__ontology["ftpaddr"])

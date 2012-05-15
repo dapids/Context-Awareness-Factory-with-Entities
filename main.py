@@ -1,4 +1,3 @@
-
 '''
 Created on Jan 17, 2012
 
@@ -6,31 +5,38 @@ Created on Jan 17, 2012
 '''
 
 from cafe.contextSpace import ContextSpace
-from cafe.tools.writer import Writer
+from cafe.tools.utils import Utils
 
 from environment.person import Person
-from environment.host import Host
 from environment.room import Room
 from environment.thing import Thing
-from environment.guest import Guest
-from environment.passiveObj import PassiveObj
-from environment.activeObj import ActiveObj
+from environment.adult import Adult
+from environment.child import Child
+from environment.elderly import Elderly
+from environment.kitchenware import Kitchenware
+from environment.appliance import Appliance
+from environment.genericObject import GenericObject
+from environment.object import Object
 
 if __name__ == '__main__':
 
     # create the context space
-    cs = ContextSpace("http://caffe.ns/home#")
+    cs = ContextSpace("http://cafe.ns/home#")
     
     # create the individuals
-    david = cs.createEntity(Host, "david")
-    marco = cs.createEntity(Guest, "marco")
-    andrea = cs.createEntity(Guest, "andrea")
+    rose = cs.createEntity(Adult, "rose")
+    marco = cs.createEntity(Adult, "marco")
+    andrea = cs.createEntity(Adult, "andrea")
     kitchen = cs.createEntity(Room, "kitchen")
     livingRoom = cs.createEntity(Room, "livingRoom")
-    bowl = cs.createEntity(PassiveObj, "bowl")
-    spoon = cs.createEntity(PassiveObj, "spoon")
-    television = cs.createEntity(ActiveObj, "television")
-    toaster = cs.createEntity(ActiveObj, "toaster")
+    bathroom = cs.createEntity(Room, "bathroom")
+    bowl = cs.createEntity(Kitchenware, "bowl")
+    spoon = cs.createEntity(Kitchenware, "spoon")
+    bottle = cs.createEntity(Kitchenware, "bottle")
+    broom = cs.createEntity(GenericObject, "broom")
+    television = cs.createEntity(Appliance, "television")
+    toaster = cs.createEntity(Appliance, "toaster")
+    dishwasher = cs.createEntity(Appliance, "dishwasher")
     
     # create a local context and define the properties belonging to it
     locations = cs.setLocalContext("locations")
@@ -38,47 +44,62 @@ if __name__ == '__main__':
     
     # create a local context and define the properties belonging to it
     info = cs.setLocalContext("info")
-    info.defineProperties(("name", 1), ("age", 1), ("graduated", 1))
+    info.defineProperties(("name", 1), ("age", 1), ("description", 1), ("genre", 1), ("posture", 1),
+                          ("celsiusTemp", 1), ("bloodPressure", 1), ("status", 1), ("roomTemperature", 1))
     
     # create a local context and define the properties belonging to it
     actions = cs.setLocalContext("actions")
     actions.defineProperties(("holds", 0), ("uses", 0), ("talksTo", 0, "s"))
     
     # define the domain and the range of the properties
-    Person.NAME = str
-    Person.AGE = int
-    Person.GRADUATED = bool
     Thing.ISLOCATED = Room
-    Person.USES = ActiveObj
-    Person.HOLDS = PassiveObj
+    Thing.ID = int
+    Thing.NAME = str    
+    
+    Person.AGE = int
+    Person.GENRE = str
+    Person.POSTURE = str
+    Person.CELSIUSTEMP = float
+    Person.BLOODTEMP = str
+    Person.USES = Appliance
+    Person.HOLDS = Kitchenware
     Person.TALKSTO = Person
+    
+    Object.DESCRIPTION = str
+    
+    Room.ROOMTEMPERATURE = float
+    
+    Appliance.STATUS = str
 
 ##===============================================================================
 ## 
 ##===============================================================================
 
     # populate the semantic network with some data
-    david.NAME = "David_Sorrentino"
-    david.AGE = 27
-    david.ISLOCATED = livingRoom
+    rose.NAME = "Rose_Brown"
+    rose.AGE = 27
+    rose.ISLOCATED = livingRoom
     
     marco.NAME = "Marco_Sorrentino"
     marco.AGE = 26
-    marco.ISLOCATED = livingRoom
+#    marco.ISLOCATED = livingRoom
     
     andrea.NAME = "Andrea_Monacchi"
     
-    bowl.ISLOCATED = livingRoom
-    spoon.ISLOCATED = livingRoom
+    rose.TALKSTO = marco
+    rose.HOLDS = spoon
+    rose.HOLDS = bowl
+    rose.USES = television
     television.ISLOCATED = livingRoom
-    toaster.ISLOCATED = kitchen
-    
-    david.TALKSTO = marco
-    david.HOLDS = spoon
-    david.HOLDS = bowl
-    david.USES = television
     andrea.TALKSTO = marco
-    david.GRADUATED = True
+    
+    spoon.ISLOCATED = kitchen
+    
+    broom.ISLOCATED = bathroom
+    
+    kitchen.NAME = "Kitchen"
+    livingRoom.NAME = "Living Room"
+    bathroom.NAME = "Bathroom"
     
 ##===============================================================================
 ## 
@@ -94,11 +115,13 @@ if __name__ == '__main__':
 ##===============================================================================
 ## 
 ##===============================================================================
-        
+
     cs.printContextsList()
     
     cs.launchServers()
 
+    #cs.saveContext("/home/david/myContext")
+    #print Utils.loadContext("/home/david/myContext")
+
     #serialize the graph as owl/rdf/xml and upload it on a FTP
-    wr = Writer()
-    wr.writeOntology(cs.serializeContext(), True)
+    cs.writeOntology(cs.serializeContext(), True)

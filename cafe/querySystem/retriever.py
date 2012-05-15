@@ -27,8 +27,7 @@ class Retriever(object):
     def performQuery(self, request):
         result = list()
         try:
-            q = self.__globalContext[0].query(request,
-                                              initNs = {self.__globalContext[2]: self.__globalContext[1]})
+            q = self.__globalContext[0].query(request)
         except StandardError as e:
             print e
         except pyparsing.ParseException as e:

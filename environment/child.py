@@ -4,15 +4,13 @@ Created on Feb 24, 2012
 @author: david
 '''
 
-from .person import Person
 from cafe.entity import Entity
+from .person import Person
 
-class Host(Entity, Person):
+class Child(Person, Entity):
     '''
     classdocs
     '''
-        
-    __surname = None    
-        
+    
     def __init__(self):
         pass

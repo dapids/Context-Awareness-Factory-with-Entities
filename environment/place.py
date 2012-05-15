@@ -5,10 +5,8 @@ Created on Mar 12, 2012
 '''
 
 from cafe.entity import Entity
-from environment.place import Place
-from environment.thing import Thing
 
-class Room(object, Entity, Place, Thing):
+class Place(object, Entity):
     '''
     classdocs
     '''

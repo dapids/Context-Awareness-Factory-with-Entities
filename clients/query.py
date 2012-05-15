@@ -1,18 +1,10 @@
 import socket, sys, re, os
-import cPickle as pickle
+import pickle
 
 head = '''\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :::                Information retriever            :::
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::
 [ctrl+D to delete your query] [ctrl+C to quit]'''
-
-
-data = """SELECT DISTINCT ?aname ?bname
-        WHERE {
-            ?a home:talksto ?b ;
-               home:name ?aname .
-            ?b home:name ?bname .
-        }"""
 
 def sendData(data):
     print("Connecting to the server..")
@@ -31,15 +23,17 @@ def sendData(data):
     else:
         print ("Answer from from the server:")
         for row in received:
-            if len(row) > 1:
+            if isinstance(row, tuple):
                 sys.stdout.write("->\t")
                 for i, el in enumerate(row):
-                    if i < len(row)-1:
-                        sys.stdout.write("%s " % el)
-                    else:
-                        sys.stdout.write("%s\n" % el)
+                    if el is not None:
+                        if i < len(row)-1:
+                            sys.stdout.write("%s " % el)
+                        else:
+                            sys.stdout.write("%s\n" % el)
             else:
-                print("->\t%s" % row)
+                if row is not None:
+                    print("->\t%s" % row)
     finally:
         sock.close()
 
@@ -47,10 +41,10 @@ def sendData(data):
 def askQuery():
     cleanScr()
     print(head)
-    query = raw_input("\nPlease, insert your SPARQL query and be sure that it ends with '#':\n\n")
+    query = raw_input("\nPlease, insert your SPARQL query and be sure that it ends with '!!':\n\n")
     flag = True
     while flag:
-        if "#" in query:
+        if "!!" in query:
             flag = False
         else:
             query = query + " " + raw_input().strip()

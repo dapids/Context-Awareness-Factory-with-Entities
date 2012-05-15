@@ -1,0 +1,9 @@
+marco uses television;
+andrea uses toaster;
+rose uses dishwasher;
+del andrea uses[toaster];
+rose uses toaster;
+del marco uses[television];
+del rose uses;
+rose uses television;
+del rose uses[television];

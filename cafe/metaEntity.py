@@ -15,7 +15,7 @@ class MetaEntity(type):
     
     def __new__(cls, name, bases, dct):
         if name != "Entity":
-            print "Init'ing class %s\n" % name
+            print "Init'ing class %s" % name
             ent = None
             lBases = list()
             for el in bases:
@@ -46,7 +46,7 @@ class MetaEntity(type):
             except SemanticException as e:
                 print e
             else:
-                print "Mapping class property: %s -> %s -> %s\n" % (self.__name__, name, value.__name__)
+                print "Mapping class property: %s -> %s -> %s" % (self.__name__, name, value.__name__)
                 self.__propertiesDict[name][0] = self
                 self.__propertiesDict[name][1] = value
                 name = "__" + name

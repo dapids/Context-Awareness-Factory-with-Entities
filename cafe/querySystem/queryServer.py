@@ -5,7 +5,7 @@ Created on Mar 18, 2012
 '''
 
 import SocketServer
-import cPickle as pickle
+import pickle
         
 class QueryServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
     """

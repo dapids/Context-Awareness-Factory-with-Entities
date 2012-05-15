@@ -4,10 +4,13 @@ Created on Gen 17, 2012
 @author: david
 '''
 
+import datetime
+import shelve
 from sets import Set
 from Queue import Queue
 import socket, fcntl, struct
 from threading import Thread
+from rdflib.term import URIRef
 from .graphManager import GraphManager
 from .localContext import LocalContext
 from .tools.exceptions import SemanticException
@@ -18,6 +21,7 @@ from .events.eventGenerator import EventGenerator
 from .querySystem.queryServer import QueryServer, QSHandler
 from .querySystem.retriever import Retriever
 from .sensors.sensorsServer import SensorsServer, SSHandler
+from .tools.writer import Writer
 
 class ContextSpace(object):
     '''
@@ -43,11 +47,12 @@ class ContextSpace(object):
         @param gns: the namespace of the global context
         """
         self.__globalContext = GlobalContext(gns)
+        gnsName = self.__globalContext.getInfo()[2]
         self.__dispatcher = Dispatcher()
         self.__dataQueue = Queue()
         EventGenerator(self.__dispatcher, self.__dataQueue, 2, self.__registeredIndividuals)
         self.__performQuery = Retriever(self.getGlobalContext()).performQuery
-        print("Creating new context-space: %s\n%s" % (gns[gns.rfind("/")+1:gns.find("#")].upper(), self.__globalContext))
+        print("\nCreating new context-space: %s\n%s" % (gnsName.upper(), self.__globalContext))
     
     
     def getGlobalContext(self):
@@ -87,7 +92,7 @@ class ContextSpace(object):
                 print e
         if identifier not in self.__registeredIndividuals.keys():
             GraphManager.mapIndividual(identifier, cl.__name__, self.__globalContext)
-            print "Mapping individual: '%s' (%s)\n" % (identifier, cl.__name__)
+            print "Mapping individual: '%s' (%s)" % (identifier, cl.__name__)
             ind = cl()
             ind(identifier, self.__dispatcher, self.__performQuery)
             self.__registeredIndividuals[identifier] = ind
@@ -104,6 +109,7 @@ class ContextSpace(object):
         @param formatType: the serialisation format
         @return: a serialisation of the global context
         """
+        print "Context serialized in OWL."
         return self.__globalContext.getInfo()[0].serialize(format = formatType)
     
     
@@ -149,13 +155,49 @@ class ContextSpace(object):
         print("Sensors server available @ %s\n" % self.__sensorsServerAddress)
         
         try:
-            raw_input("Press a key to shutdown the servers.\n\n")
+            key = raw_input("Type 's' to shutdown the servers or press any other key to visualise the context.\n\n")
         except KeyboardInterrupt:
             print ""
         except EOFError:
             print ""
-        finally:
-            print "Shutting down servers..."
-            qs.shutdown()
-            ss.shutdown()
-            print("Servers are down. Quit.")
+        flag = True
+        while flag:
+            if key == "s":
+                print "Shutting down servers..."
+                qs.shutdown()
+                ss.shutdown()
+                print("Servers are down. Quitting...")
+                flag = False
+            else:
+                self.visualizeContext()
+                key = raw_input()
+            
+    
+    def saveContext(self, filename):
+        storedContext = shelve.open(filename)
+        timestamp = str(datetime.datetime.now())
+        storedContext[timestamp] = str(self.__globalContext.getInfo()[1]), self.__globalContext.getInfo()[0]
+        storedContext.close()
+        print "Context snapshot taken at the time '%s'." % timestamp
+            
+            
+    def visualizeContext(self):
+        contextGraph = self.getGlobalContext()
+        semNet = list()
+        triples = list(contextGraph[0].triples((None, None, None)))
+        for el in triples:
+            if el[1] == URIRef("http://www.w3.org/2000/01/rdf-schema#subClassOf"):
+                semNet.append(el)
+            elif el[1] == URIRef("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"):
+                if not str(el[2]).startswith("http://www.w3.org"):
+                    semNet.append(el)
+            elif not str(el[1]).startswith("http://www.w3.org") and not str(el[1]).endswith("ID"):
+                semNet.append(el)
+        Utils.triplesToDot(semNet, "Semantic_Network", contextGraph[1])
+#        triples = contextGraph[0].triples((None, None, None))
+#        for t in triples:
+#            print t
+
+    def writeContext(self, ontology, upload=False):
+        wr = Writer()
+        wr.writeOntology(ontology, upload)

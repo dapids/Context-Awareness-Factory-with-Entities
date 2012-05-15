@@ -5,9 +5,9 @@ Created on Mar 12, 2012
 '''
 
 from cafe.entity import Entity
-from .obj import Obj
+from .object import Object
 
-class PassiveObj(object, Entity, Obj):
+class GenericObject(object, Entity, Object):
     '''
     classdocs
     '''

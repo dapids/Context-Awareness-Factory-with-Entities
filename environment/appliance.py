@@ -5,9 +5,11 @@ Created on Mar 12, 2012
 '''
 
 from cafe.entity import Entity
-from environment.thing import Thing
+from .object import Object
 
-class Obj(Entity, Thing):
+class Appliance(Entity, Object):
     '''
     classdocs
     '''
+
+        

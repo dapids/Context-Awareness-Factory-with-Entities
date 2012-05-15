@@ -1,0 +1,7 @@
+rose talksto marco;
+rose talksto andrea;
+del rose talksto[marco];
+rose talksto marco;
+del rose talksto;
+marco talksto andrea;
+del marco talksto[andrea];

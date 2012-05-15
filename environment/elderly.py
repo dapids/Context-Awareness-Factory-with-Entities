@@ -4,13 +4,15 @@ Created on Feb 24, 2012
 @author: david
 '''
 
-from cafe.entity import Entity
 from .person import Person
+from cafe.entity import Entity
 
-class Guest(Person, Entity):
+class Elderly(Entity, Person):
     '''
     classdocs
     '''
-    
+        
+    __surname = None    
+        
     def __init__(self):
         pass
